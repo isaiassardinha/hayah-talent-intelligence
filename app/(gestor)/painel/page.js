@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function Painel() {
   const supabase = await supabaseServidor();
   const [{ data: avs }, { count: nConvites }, { count: nEmpresas }] = await Promise.all([
-    supabase.from("avaliacoes").select("id, nome, tipo, respostas, notas, duracao_seg, devolutiva_liberada_em, criado_em, empresas(nome)").order("criado_em", { ascending: false }),
+    supabase.from("avaliacoes").select("id, nome, tipo, respostas, respostas_extra, notas, duracao_seg, devolutiva_liberada_em, criado_em, empresas(nome)").order("criado_em", { ascending: false }),
     supabase.from("convites").select("id", { count: "exact", head: true }).eq("ativo", true),
     supabase.from("empresas").select("id", { count: "exact", head: true })
   ]);
@@ -45,7 +45,8 @@ export default async function Painel() {
                   <div className="small muted">{av.empresas ? av.empresas.nome : "Sem empresa"} · {TIPO[av.tipo]} · {fData(av.criado_em)}</div>
                 </div>
                 <div className="row" style={{ gap: 6 }}>
-                  {a.top[0] && <span className="chip plain">{a.top[0].dept} · {a.top[0].best}%</span>}
+                  {a.top[0] && <span className="chip plain">{a.top[0].dept} · {a.top[0].area}%</span>}
+                  {a.inconclusivo && <span className="chip plain">Sem preferência clara</span>}
                   {a.interviewDone ? <span className="chip good">Entrevista avaliada</span> : <span className="chip warn">Entrevista pendente</span>}
                   {av.devolutiva_liberada_em && <span className="chip">Devolutiva liberada</span>}
                   {a.alerts.some(x => ALERTAS_GRAVES.includes(x.code)) && <span className="chip bad">Alerta</span>}

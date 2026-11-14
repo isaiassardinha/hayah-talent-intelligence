@@ -13,22 +13,29 @@ import { salvarNotas, avaliarComClaude, liberarDevolutiva, excluirAvaliacao } fr
 
 export const dynamic = "force-dynamic";
 
+const NIVEL = { alto: "Alto", medio: "Médio", baixo: "Baixo" };
+
+// Card de área. A nota da área junta o perfil padronizado e os interesses; as funções mostram a compatibilidade absoluta.
 function Area({ d, tipo, pos }) {
-  const pct = tipo === "good" ? d.best : d.avg;
   return (
     <div className={"area " + tipo}>
       <div className="row between" style={{ alignItems: "flex-start" }}>
-        <h3>{d.dept}</h3><span className="pct num">{pct}%</span>
+        <h3>{d.dept}</h3><span className="pct num">{d.area}%</span>
       </div>
-      <span className="small muted">{tipo === "good" ? pos + "º · maior nota entre as funções" : "média das funções"}</span>
+      <span className="small muted">
+        {tipo === "good" ? pos + "º · " : ""}perfil {d.perfil}%{d.interesse != null ? " · interesse " + d.interesse + "%" : " · interesses não medidos"}
+      </span>
       {d.funcs.map(f => (
         <div className="frow" key={f.name}>
-          <span>{f.name}</span><span className="num">{f.pct == null ? "–" : f.pct + "%"}</span>
+          <span>{f.name}{tipo === "good" && d.exemplo === f.name && <> <span className="chip">indicada</span></>}</span><span className="num">{f.pct == null ? "–" : f.pct + "%"}</span>
           <div className={"bar " + corBarra(f.pct)}><i style={{ width: (f.pct || 0) + "%" }} /></div>
         </div>
       ))}
-      {tipo === "bad" && d.reasons.length > 0 && (
-        <p className="small"><b>Motivo:</b> {d.reasons.map(r => r.label.toLowerCase() + " " + f1(r.value) + " (" + r.risk + ")").join("; ")}</p>
+      {tipo === "bad" && (d.reasons.length > 0 || d.interesseBaixo) && (
+        <p className="small"><b>Motivo:</b> {[
+          ...d.reasons.map(r => r.label.toLowerCase() + " " + f1(r.value) + " (" + r.risk + ")"),
+          ...(d.interesseBaixo ? ["pouco interesse em " + d.interesseBaixo] : [])
+        ].join("; ")}</p>
       )}
     </div>
   );
@@ -50,6 +57,8 @@ export default async function Pessoa({ params, searchParams }) {
   const linkDevolutiva = base.replace(/\/$/, "") + "/d/" + av.segredo;
   const alertas = [...a.alerts];
   if (av.convites && av.convites.menores) alertas.unshift({ code: "menores", text: "Pessoa de um grupo com menores de idade. Trate estes dados como sensíveis." });
+  if (a.inconclusivo) alertas.push({ code: "inconclusivo", text: "Sem preferência clara entre as áreas: as 3 primeiras ficaram só " + a.gap + " pontos acima da mediana. Use a entrevista para entender os interesses da pessoa." });
+  if (!a.extra.respondido) alertas.push({ code: "sem-bloco2", text: "Avaliação feita antes da versão 0.3: sem interesses, motivação para liderar e histórico. As áreas usam só o perfil padronizado." });
   if (!a.interviewDone) alertas.push({ code: "pendente", text: "A entrevista ainda não foi avaliada. Por enquanto as notas usam só o teste de personalidade." });
 
   return (
@@ -68,6 +77,33 @@ export default async function Pessoa({ params, searchParams }) {
 
       <section className="stack"><h3>Áreas recomendadas</h3><div className="grid3">{a.top.map((d, i) => <Area key={d.dept} d={d} tipo="good" pos={i + 1} />)}</div></section>
       <section className="stack"><h3>Áreas não indicadas</h3><div className="grid3">{a.bottom.map(d => <Area key={d.dept} d={d} tipo="bad" />)}</div></section>
+      <p className="small muted">Nota da área = 50% perfil (o que se destaca na própria pessoa, média das funções) + 50% interesses. Nas funções, a porcentagem é a compatibilidade absoluta, usada nas vagas.</p>
+
+      <section className="card stack">
+        <h3>Liderança e interesses</h3>
+        <div className="grid2">
+          <div className="stack" style={{ gap: 8 }}>
+            <div className="row between"><span>Índice de liderança</span><b className="num">{f1(a.lideranca.value)} · {NIVEL[a.lideranca.nivel]}</b></div>
+            <div className="escala"><b style={{ left: ((a.lideranca.value - 1) / 4 * 100) + "%" }} /></div>
+            {a.lideranca.medido ? (
+              <table className="tab"><tbody>
+                <tr><td>Motivação para liderar (40%)</td><td className="n num">{f1(a.lideranca.motivacao)}</td></tr>
+                <tr><td>Histórico de liderança (30%)</td><td className="n num">{f1(a.lideranca.historico)}</td></tr>
+                <tr><td>Traços: competência liderança (30%)</td><td className="n num">{f1(a.lideranca.tracos)}</td></tr>
+              </tbody></table>
+            ) : <p className="small muted">Sem o bloco de motivação e histórico: o índice usa só os traços.</p>}
+            <p className="small muted">Alto a partir de 3,8: nas áreas indicadas, a função sugerida passa a ser a de liderança.</p>
+          </div>
+          <div className="stack" style={{ gap: 6 }}>
+            {a.interesses ? M.RIASEC.map(t => (
+              <div key={t} className="frow">
+                <span>{M.RIASEC_NAMES[t]} <span className="small muted">· {M.RIASEC_TEXT[t]}</span></span><b className="num">{f1(a.interesses[t])}</b>
+                <div className={"bar " + corBarra((a.interesses[t] - 1) / 4 * 100)}><i style={{ width: ((a.interesses[t] - 1) / 4 * 100) + "%" }} /></div>
+              </div>
+            )) : <p className="small muted">Interesses não medidos nesta avaliação.</p>}
+          </div>
+        </div>
+      </section>
 
       <section className="card stack">
         <h3>Traços de personalidade (HEXACO, de 1 a 5)</h3>

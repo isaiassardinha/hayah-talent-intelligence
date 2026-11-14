@@ -95,13 +95,15 @@ footer.aviso { padding: 8px 24px 32px; color: var(--muted); font-size: .82rem; m
 .publica { max-width: 760px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 16px }
 .progresso { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden }
 .progresso i { display: block; height: 100%; background: var(--accent) }
-fieldset.item { border: 0; margin: 0; padding: 12px 0; border-top: 1px solid var(--line) }
-fieldset.item legend { font-weight: 600; padding: 0; margin-bottom: 8px }
+/* botões da escala finos (versão 0.3): cerca de 35% mais baixos, para o formulário parecer mais leve */
+fieldset.item { border: 0; margin: 0; padding: 8px 0; border-top: 1px solid var(--line) }
+fieldset.item legend { font-weight: 600; padding: 0; margin-bottom: 6px }
 .likert { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px }
 .likert input { position: absolute; opacity: 0; pointer-events: none }
-.likert label { border: 1px solid var(--line-strong); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: .8rem; display: flex; flex-direction: column; gap: 2px; background: var(--panel) }
-.likert label b { font-size: 1rem }
+.likert label { border: 1px solid var(--line-strong); border-radius: 7px; padding: 3px 4px; text-align: center; cursor: pointer; font-size: .76rem; line-height: 1.15; display: flex; flex-direction: column; gap: 0; background: var(--panel) }
+.likert label b { font-size: .88rem; line-height: 1.2 }
 .likert input:checked + label { background: var(--accent); border-color: var(--accent); color: #fff }
 .likert input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px }
 @media (max-width: 520px) { .likert label { font-size: .68rem } }
 .devolutiva h3 { margin-top: 14px }
+.qr { width: min(420px, 80vw) } .qr svg { width: 100%; height: auto; display: block }

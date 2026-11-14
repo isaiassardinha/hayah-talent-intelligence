@@ -80,10 +80,12 @@ for (let i = 0; i < 10; i++) for (let t = 0; t < 6; t++) ITEM_ORDER.push(t * 10 
 /* Pares de coerência (números 1 a 60) */
 const COHERENCE_PAIRS = [[11, 12], [15, 16], [33, 34], [46, 47], [56, 58]];
 
-/* 3A — competências calculadas a partir dos traços. Ei = E invertida (6 − E). */
+/* 3A — competências calculadas a partir dos traços.
+   Ea = estabilidade: facetas Ansiedade e Medo da Emocionalidade, invertidas (6 − média).
+   Sentimentalismo e Dependência ficam de fora: sentir as emoções dos outros não é instabilidade. */
 const COMPS = {
-  resiliencia:     { label: "Resiliência", w: { Ei: .6, C: .4 } },
-  estabilidade:    { label: "Estabilidade emocional", w: { Ei: 1 } },
+  resiliencia:     { label: "Resiliência", w: { Ea: .6, C: .4 } },
+  estabilidade:    { label: "Estabilidade emocional", w: { Ea: 1 } },
   disciplina:      { label: "Disciplina", w: { C: 1 } },
   organizacao:     { label: "Organização / planejamento", w: { C: .8, O: .2 } },
   detalhes:        { label: "Atenção a detalhes / segurança", w: { C: 1 } },
@@ -92,22 +94,22 @@ const COMPS = {
   comunicacao:     { label: "Comunicação", w: { X: .6, O: .4 } },
   escrita:         { label: "Comunicação escrita", w: { O: .6, C: .4 } },
   extroversao:     { label: "Extroversão", w: { X: 1 } },
-  persuasao:       { label: "Persuasão / negociação", w: { X: .5, Ei: .3, O: .2 } },
+  persuasao:       { label: "Persuasão / negociação", w: { X: .5, Ea: .3, O: .2 } },
   relacionamento:  { label: "Relacionamento", w: { X: .5, A: .5 } },
-  cordialidade:    { label: "Cordialidade / paciência", w: { A: .8, Ei: .2 } },
+  cordialidade:    { label: "Cordialidade / paciência", w: { A: .8, Ea: .2 } },
   empatia:         { label: "Escuta e empatia", w: { A: .6, E: .2, O: .2 } },
-  conflitos:       { label: "Mediação de conflitos", w: { A: .5, Ei: .3, H: .2 } },
-  lideranca:       { label: "Liderança", w: { X: .4, C: .3, Ei: .3 } },
+  conflitos:       { label: "Mediação de conflitos", w: { A: .5, Ea: .3, H: .2 } },
+  lideranca:       { label: "Liderança", w: { X: .4, C: .3, Ea: .3 } },
   desenvolvimento: { label: "Desenvolvimento de pessoas", w: { A: .4, X: .3, O: .3 } },
-  autoconfianca:   { label: "Autoconfiança / firmeza", w: { X: .5, Ei: .5 } },
+  autoconfianca:   { label: "Autoconfiança / firmeza", w: { X: .5, Ea: .5 } },
   autonomia:       { label: "Autonomia / proatividade", w: { C: .5, X: .3, O: .2 } },
   criatividade:    { label: "Criatividade", w: { O: 1 } },
   curiosidade:     { label: "Curiosidade / aprendizado contínuo", w: { O: .8, C: .2 } },
   estrategia:      { label: "Visão estratégica", w: { O: .6, C: .4 } },
   analitica:       { label: "Visão analítica / raciocínio", w: { O: .4, C: .6 } },
-  problemas:       { label: "Resolução de problemas", w: { O: .5, C: .3, Ei: .2 } },
+  problemas:       { label: "Resolução de problemas", w: { O: .5, C: .3, Ea: .2 } },
   resultado:       { label: "Foco em resultado", w: { C: .7, X: .3 } },
-  crise:           { label: "Gestão de crise / tomada de decisão", w: { Ei: .5, C: .3, X: .2 } },
+  crise:           { label: "Gestão de crise / tomada de decisão", w: { Ea: .5, C: .3, X: .2 } },
   feedback:        { label: "Abertura a feedback / humildade", w: { H: .5, A: .3, O: .2 } },
   equipe:          { label: "Trabalho em equipe", w: { A: .6, H: .2, X: .2 } },
   tecnico:         { label: "Conhecimento técnico / do produto", w: null } // não vem de personalidade
@@ -281,7 +283,19 @@ const RULES = {
   wInterview: 0.4,
   criticalMin: 3,              // competência crítica abaixo de 3 → penalidade
   criticalPenalty: 10,         // pontos percentuais por competência crítica abaixo do mínimo
-  ideal: 5                     // perfil ideal = 5 em todas as competências da função
+  ideal: 5,                    // perfil ideal = 5 em todas as competências da função
+  /* Áreas (top 3 / 3 não indicadas) — versão 0.3 */
+  stdSpread: 0.8,              // perfil padronizado: cada desvio-padrão da pessoa vale 0,8 ponto
+  stdMinSd: 0.3,               // desvio mínimo usado na padronização (evita esticar ruído)
+  wAreaPerfil: 0.5,            // nota da área = 50% perfil padronizado + 50% interesses
+  wAreaInteresse: 0.5,
+  interesseSpread: 20,         // interesse: cada desvio-padrão da pessoa vale 20 pontos
+  inconclusivo: 8,             // média das 3 primeiras áreas menos a mediana de todas abaixo disso = sem preferência clara
+  /* Liderança — versão 0.3 */
+  wLidMotivacao: 0.4,          // índice de liderança = 40% motivação para liderar
+  wLidHistorico: 0.3,          //   + 30% histórico de liderança
+  wLidTracos: 0.3,             //   + 30% competência liderança (traços)
+  lidAlto: 3.8, lidMedio: 3.0  // faixas do índice (1 a 5)
 };
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -299,11 +313,104 @@ function scoreTraits(answers) {
   });
   const out = {};
   TRAITS.forEach(t => { out[t] = n[t] ? sum[t] / n[t] : null; });
+  // Ea: estabilidade emocional só pelas facetas Ansiedade e Medo (invertidas)
+  let se = 0, ne = 0;
+  ITEMS.forEach((it, i) => {
+    const a = answers[i];
+    if (it.trait !== "E" || (it.facet !== "Ansiedade" && it.facet !== "Medo") || a == null || !(a >= 1 && a <= 5)) return;
+    se += it.dir > 0 ? a : 6 - a; ne++;
+  });
+  out.Ea = ne ? 6 - se / ne : (out.E == null ? null : 6 - out.E);
   return out;
 }
 
 function traitValue(traits, k) {
+  if (k === "Ea") return traits.Ea != null ? traits.Ea : 6 - traits.E;
   return k === "Ei" ? 6 - traits.E : traits[k];
+}
+
+/* ================= Bloco 2 (versão 0.3): interesses, motivação para liderar e histórico ================= */
+/* Itens próprios, escritos para este sistema. Interesses seguem o modelo RIASEC de Holland (teoria pública);
+   a motivação para liderar segue a ideia da literatura, sem copiar escalas publicadas. */
+const RIASEC = ["R", "I", "A", "S", "E", "C"];
+const RIASEC_NAMES = { R: "Realista", I: "Investigativo", A: "Artístico", S: "Social", E: "Empreendedor", C: "Convencional" };
+const RIASEC_TEXT = {
+  R: "trabalhar com as mãos, máquinas e atividades práticas",
+  I: "investigar, analisar e entender como as coisas funcionam",
+  A: "criar, imaginar e se expressar",
+  S: "ensinar, ajudar e cuidar de pessoas",
+  E: "liderar, convencer e tomar a frente",
+  C: "organizar, conferir e seguir procedimentos"
+};
+const ESCALAS = {
+  concordo: ["Discordo totalmente", "Discordo", "Neutro", "Concordo", "Concordo totalmente"],
+  interesse: ["Não gostaria nada", "Gostaria pouco", "Indiferente", "Gostaria", "Gostaria muito"],
+  vezes: ["Nunca", "1 vez", "2 ou 3 vezes", "4 a 6 vezes", "Mais de 6 vezes"]
+};
+/* 33 itens: [texto, bloco, chave, sentido]. bloco: interesse (chave = tipo RIASEC), motivacao, historico (chave = lid ou dev). */
+const EXTRA_ITEMS = [
+  ["Montar, consertar ou fazer manutenção em máquinas e equipamentos.", "interesse", "R", 1],
+  ["Investigar a causa de um problema até entender como ele funciona.", "interesse", "I", 1],
+  ["Criar textos, imagens, vídeos ou músicas.", "interesse", "A", 1],
+  ["Ensinar ou treinar outras pessoas.", "interesse", "S", 1],
+  ["Liderar uma equipe para alcançar uma meta.", "interesse", "E", 1],
+  ["Organizar arquivos, planilhas e documentos.", "interesse", "C", 1],
+  ["Trabalhar com as mãos, construindo ou instalando coisas.", "interesse", "R", 1],
+  ["Fazer testes ou experimentos para descobrir algo.", "interesse", "I", 1],
+  ["Desenhar, decorar ou planejar o visual de alguma coisa.", "interesse", "A", 1],
+  ["Ajudar pessoas a resolver problemas pessoais ou profissionais.", "interesse", "S", 1],
+  ["Convencer pessoas a apoiar uma ideia ou comprar um produto.", "interesse", "E", 1],
+  ["Conferir números, notas ou relatórios para achar erros.", "interesse", "C", 1],
+  ["Operar veículos, ferramentas ou máquinas.", "interesse", "R", 1],
+  ["Analisar números e dados para tirar conclusões.", "interesse", "I", 1],
+  ["Inventar ideias para uma campanha ou um produto novo.", "interesse", "A", 1],
+  ["Cuidar da saúde ou do bem-estar de outras pessoas.", "interesse", "S", 1],
+  ["Abrir e administrar o próprio negócio.", "interesse", "E", 1],
+  ["Seguir procedimentos e normas com precisão.", "interesse", "C", 1],
+  ["Trabalhar em campo, numa obra, fazenda, oficina ou armazém.", "interesse", "R", 1],
+  ["Estudar a fundo um assunto técnico ou científico.", "interesse", "I", 1],
+  ["Escrever histórias, roteiros ou conteúdos para redes sociais.", "interesse", "A", 1],
+  ["Atender pessoas e orientar sobre o que elas precisam.", "interesse", "S", 1],
+  ["Negociar acordos, preços ou contratos.", "interesse", "E", 1],
+  ["Controlar estoque, pagamentos ou cadastros.", "interesse", "C", 1],
+  ["Gosto de tomar a frente quando um grupo precisa de direção.", "motivacao", "mtl", 1],
+  ["Sinto satisfação em coordenar o trabalho de outras pessoas.", "motivacao", "mtl", 1],
+  ["Prefiro ser liderado a liderar.", "motivacao", "mtl", -1],
+  ["Quando o grupo precisa decidir algo difícil, costumo me oferecer para conduzir.", "motivacao", "mtl", 1],
+  ["Me vejo, no futuro, à frente de uma equipe.", "motivacao", "mtl", 1],
+  ["Quando ninguém assume a liderança, sinto que devo assumir.", "motivacao", "mtl", 1],
+  ["Quantas vezes você coordenou um grupo, uma equipe ou um projeto (no trabalho, na escola, na igreja, no esporte ou em trabalho voluntário)?", "historico", "lid", 1],
+  ["Quantas vezes outras pessoas escolheram você para representar ou liderar um grupo?", "historico", "lid", 1],
+  ["Quantas vezes você ensinou, treinou ou orientou alguém por algumas semanas ou mais?", "historico", "dev", 1]
+].map(([t, bloco, chave, dir]) => ({ t, bloco, chave, dir, escala: bloco === "interesse" ? "interesse" : bloco === "historico" ? "vezes" : "concordo" }));
+const EXTRA_N = EXTRA_ITEMS.length;
+const EXTRA_INTRO = {
+  interesse: "O quanto você gostaria de fazer cada atividade no trabalho? Pense no que te atrai, não no que você já sabe fazer.",
+  motivacao: "O quanto cada afirmação descreve você?",
+  historico: "Conte quantas vezes isso já aconteceu na sua vida, em qualquer lugar: trabalho, escola, família, igreja, esporte ou voluntariado."
+};
+
+/* Notas do bloco 2 (1 a 5). Sem respostas: null em tudo (avaliações antigas). */
+function scoreExtra(extra) {
+  const out = { interesses: null, mtl: null, histLid: null, histDev: null, respondido: false };
+  if (!Array.isArray(extra) || !extra.some(a => a >= 1 && a <= 5)) return out;
+  const acc = {};
+  EXTRA_ITEMS.forEach((it, i) => {
+    const a = extra[i];
+    if (a == null || !(a >= 1 && a <= 5)) return;
+    const k = it.bloco === "historico" ? "hist" + it.chave : it.chave;
+    const v = it.dir > 0 ? a : 6 - a;
+    (acc[k] = acc[k] || []).push(v);
+  });
+  const avg = k => acc[k] && acc[k].length ? acc[k].reduce((x, y) => x + y, 0) / acc[k].length : null;
+  const ints = {};
+  RIASEC.forEach(t => { ints[t] = avg(t); });
+  out.interesses = RIASEC.some(t => ints[t] != null) ? ints : null;
+  out.mtl = avg("mtl");
+  out.histLid = avg("histlid");
+  out.histDev = avg("histdev");
+  out.respondido = true;
+  return out;
 }
 
 /* Notas de entrevista por competência: geral (10 perguntas) + específica da vaga (5 a 6 perguntas) */
@@ -317,7 +424,7 @@ function interviewMap(generalNotes, specificQs, specificNotes) {
 
 /* Notas das competências (1 a 5): traços + entrevista quando avaliada.
    Conhecimento técnico não vem da personalidade: só entra quando a entrevista específica o avalia. */
-function scoreCompetenciesFromMap(traits, ivMap) {
+function scoreCompetenciesFromMap(traits, ivMap, ex) {
   const out = {};
   Object.entries(COMPS).forEach(([key, c]) => {
     const list = ivMap[key];
@@ -325,13 +432,16 @@ function scoreCompetenciesFromMap(traits, ivMap) {
     if (!c.w) { out[key] = { value: iv, traits: null, interview: iv }; return; }
     let t = 0;
     Object.entries(c.w).forEach(([k, w]) => { t += w * traitValue(traits, k); });
+    // versão 0.3: liderança e desenvolvimento de pessoas também usam o bloco 2 (mais perguntas por competência)
+    if (ex && key === "lideranca" && ex.mtl != null) t = 0.5 * t + 0.3 * ex.mtl + 0.2 * (ex.histLid != null ? ex.histLid : ex.mtl);
+    if (ex && key === "desenvolvimento" && ex.histDev != null) t = 0.7 * t + 0.3 * ex.histDev;
     const value = iv == null ? t : RULES.wTraitsWithInterview * t + RULES.wInterview * iv;
     out[key] = { value, traits: t, interview: iv };
   });
   return out;
 }
-function scoreCompetencies(traits, interviewScores) {
-  return scoreCompetenciesFromMap(traits, interviewMap(interviewScores));
+function scoreCompetencies(traits, interviewScores, ex) {
+  return scoreCompetenciesFromMap(traits, interviewMap(interviewScores), ex);
 }
 
 /* Compatibilidade de uma função: 100% − distância ponderada até o ideal (5), com penalidade de crítica */
@@ -363,13 +473,69 @@ function riskLabel(key) {
   return g ? g[0] : "baixa aderência";
 }
 
-/* Departamentos: maior nota para recomendar, média para alertar */
-function scoreDepartments(comps, lib) {
+/* Código RIASEC de cada departamento da biblioteca: tipo principal e secundário. */
+const DEPT_RIASEC = {
+  "Vendas": "ES", "Marketing": "AE", "Financeiro": "CI", "Recursos Humanos": "SE", "Operações": "RC",
+  "Tecnologia": "IC", "Atendimento ao cliente": "SC", "Jurídico": "EI", "Compras e suprimentos": "CE",
+  "Logística": "CR", "Produção / Indústria": "RC", "Qualidade": "CI", "Administrativo": "CS", "Contabilidade": "CI",
+  "Comunicação e relações públicas": "AS", "Pesquisa e desenvolvimento / Produto": "IA", "Projetos / PMO": "EC",
+  "Manutenção e facilities": "RI", "Segurança do trabalho e meio ambiente": "IR", "Diretoria e gestão estratégica": "EC",
+  "Comercial externo e representação": "ES", "Treinamento e educação corporativa": "SA", "Expansão e franquias": "EI",
+  "Dados e BI": "IC", "Saúde ocupacional e bem-estar": "SI"
+};
+
+const media = v => v.reduce((a, b) => a + b, 0) / v.length;
+const desvio = v => { const m = media(v); return Math.sqrt(media(v.map(x => (x - m) * (x - m)))); };
+const mediana = v => { const o = [...v].sort((a, b) => a - b); const k = Math.floor(o.length / 2); return o.length % 2 ? o[k] : (o[k - 1] + o[k]) / 2; };
+
+/* Perfil padronizado: o que se destaca na própria pessoa. Média da pessoa = 3; cada desvio-padrão vale 0,8 ponto. */
+function standardize(comps) {
+  const vals = Object.values(comps).map(c => c.value).filter(v => v != null);
+  const m = vals.length ? media(vals) : 3;
+  const sd = Math.max(vals.length ? desvio(vals) : 0, RULES.stdMinSd);
+  const out = {};
+  Object.entries(comps).forEach(([k, c]) => { out[k] = c.value == null ? null : clamp(3 + (c.value - m) / sd * RULES.stdSpread, 1, 5); });
+  return { values: out, mean: m, sd: desvio(vals.length ? vals : [3]) };
+}
+/* Aderência relativa de uma função (0 a 100): média ponderada do perfil padronizado, sem penalidade. */
+function relativeFit(func, std) {
+  let s = 0, w = 0;
+  func.comps.forEach(c => { const v = std[c.key]; if (v == null) return; s += c.w * v; w += c.w; });
+  return w ? (s / w - 1) / 4 * 100 : null;
+}
+/* Interesses padronizados (z da pessoa) por tipo RIASEC */
+function interestZ(ints) {
+  if (!ints) return null;
+  const vals = RIASEC.map(t => ints[t]).filter(v => v != null);
+  if (vals.length < 6) return null;
+  const m = media(vals), sd = Math.max(desvio(vals), RULES.stdMinSd);
+  const z = {};
+  RIASEC.forEach(t => { z[t] = (ints[t] - m) / sd; });
+  return z;
+}
+/* Função que lidera no departamento: a de maior peso em liderança */
+function leaderFunc(d) {
+  let best = null, bw = 0;
+  d.funcs.forEach(f => { const w = f.comps.filter(c => c.key === "lideranca").reduce((a, c) => a + c.w, 0); if (w > bw) { bw = w; best = f.name; } });
+  return best;
+}
+
+/* Departamentos (versão 0.3).
+   area = 50% perfil padronizado (média das funções, sem deixar o cargo de entrada decidir) + 50% interesses.
+   best (maior nota) e avg (média) continuam calculados com as notas absolutas, para vagas e comparações. */
+function scoreDepartments(comps, lib, ex) {
+  const std = standardize(comps).values;
+  const z = interestZ(ex && ex.interesses);
   return (lib || LIBRARY).map(d => {
-    const funcs = d.funcs.map(f => ({ name: f.name, ...scoreFunction(f, comps) }));
+    const funcs = d.funcs.map(f => ({ name: f.name, ...scoreFunction(f, comps), rel: relativeFit(f, std) }));
     const vals = funcs.map(f => f.pct).filter(v => v != null);
     const best = Math.max(...vals);
     const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const rels = funcs.map(f => f.rel).filter(v => v != null);
+    const perfil = rels.length ? media(rels) : null;
+    const code = DEPT_RIASEC[d.dept] || null;
+    const interesse = z && code ? clamp(50 + RULES.interesseSpread * (2 * z[code[0]] + z[code[1]]) / 3, 0, 100) : null;
+    const area = perfil == null ? null : interesse == null ? perfil : RULES.wAreaPerfil * perfil + RULES.wAreaInteresse * interesse;
     // motivo do desencaixe: competências críticas mais fracas do departamento
     const crit = {};
     d.funcs.forEach(f => f.comps.forEach(c => {
@@ -380,8 +546,25 @@ function scoreDepartments(comps, lib) {
     }));
     const weakest = Object.values(crit).sort((a, b) => a.value - b.value).slice(0, 2);
     const reasons = weakest.map(w => ({ ...w, risk: riskLabel(w.key) }));
-    return { dept: d.dept, id: d.id, funcs, best: Math.round(best), avg: Math.round(avg), reasons };
+    const interesseBaixo = interesse != null && interesse < 40 ? RIASEC_TEXT[code[0]] : null;
+    return {
+      dept: d.dept, id: d.id, funcs, best: Math.round(best), avg: Math.round(avg), reasons,
+      perfil: perfil == null ? null : Math.round(perfil), interesse: interesse == null ? null : Math.round(interesse),
+      area: area == null ? null : Math.round(area), riasec: code, lider: leaderFunc(d), interesseBaixo
+    };
   });
+}
+
+/* Índice de liderança (1 a 5): motivação para liderar + histórico + traços. Sem o bloco 2, só os traços. */
+function leadershipIndex(traits, ex) {
+  let tr = 0;
+  Object.entries(COMPS.lideranca.w).forEach(([k, w]) => { tr += w * traitValue(traits, k); });
+  const medido = !!(ex && ex.mtl != null);
+  const value = medido
+    ? RULES.wLidMotivacao * ex.mtl + RULES.wLidHistorico * (ex.histLid != null ? ex.histLid : ex.mtl) + RULES.wLidTracos * tr
+    : tr;
+  const nivel = value >= RULES.lidAlto ? "alto" : value >= RULES.lidMedio ? "medio" : "baixo";
+  return { value, nivel, medido, motivacao: medido ? ex.mtl : null, historico: medido ? ex.histLid : null, tracos: tr };
 }
 
 /* Alertas de qualidade das respostas */
@@ -408,19 +591,31 @@ function answerAlerts(answers) {
 }
 
 /* Análise completa de uma pessoa */
-function analyze(answers, interviewScores, lib) {
+function analyze(answers, interviewScores, lib, extra) {
   const traits = scoreTraits(answers);
-  const comps = scoreCompetencies(traits, interviewScores);
-  const depts = scoreDepartments(comps, lib).filter(d => d.funcs.some(f => f.pct != null));
-  const top = [...depts].sort((a, b) => b.best - a.best || b.avg - a.avg).slice(0, 3);
+  const ex = scoreExtra(extra);
+  const comps = scoreCompetencies(traits, interviewScores, ex);
+  const depts = scoreDepartments(comps, lib, ex).filter(d => d.area != null);
+  const top = [...depts].sort((a, b) => b.area - a.area || b.best - a.best).slice(0, 3);
   const topNames = new Set(top.map(d => d.dept));
-  const bottom = [...depts].filter(d => !topNames.has(d.dept)).sort((a, b) => a.avg - b.avg || a.best - b.best).slice(0, 3);
+  const bottom = [...depts].filter(d => !topNames.has(d.dept)).sort((a, b) => a.area - b.area || a.avg - b.avg).slice(0, 3);
+  const lideranca = leadershipIndex(traits, ex);
+  // diferença pequena entre as áreas = sem preferência clara
+  const gap = depts.length > 3 ? media(top.map(d => d.area)) - mediana(depts.map(d => d.area)) : null;
+  const inconclusivo = gap != null && gap < RULES.inconclusivo;
+  // função de exemplo em cada área: a que lidera, quando o índice de liderança é alto; senão a de maior nota
+  top.forEach(d => {
+    const porNota = [...d.funcs].filter(f => f.pct != null).sort((a, b) => b.pct - a.pct);
+    const naoLider = porNota.filter(f => f.name !== d.lider);
+    d.exemplo = lideranca.nivel === "alto" && d.lider ? d.lider : (naoLider[0] || porNota[0]).name;
+  });
   const compList = Object.entries(comps)
     .filter(([, c]) => c.value != null)
     .map(([key, c]) => ({ key, label: COMPS[key].label, ...c }))
     .sort((a, b) => b.value - a.value);
   const interviewDone = !!(interviewScores && interviewScores.some(s => s >= 1 && s <= 5));
-  return { traits, comps, compList, depts, top, bottom, alerts: answerAlerts(answers), interviewDone };
+  return { traits, comps, compList, depts, top, bottom, alerts: answerAlerts(answers), interviewDone,
+    extra: ex, interesses: ex.interesses, lideranca, inconclusivo, gap: gap == null ? null : Math.round(gap) };
 }
 
 /* Textos da devolutiva (linguagem para a pessoa avaliada) */
@@ -480,13 +675,31 @@ function buildFeedback(result, tipo) {
   const desenvolver = result.compList.slice(-2).reverse().map(c => c.label);
   const areas = result.top.map(d => {
     const bestF = [...d.funcs].filter(f => f.pct != null).sort((a, b) => b.pct - a.pct)[0];
-    return { dept: d.dept, funcao: bestF.name, pct: d.best, formacao: CAREERS[d.dept] || [] };
+    return { dept: d.dept, funcao: d.exemplo || bestF.name, pct: d.area != null ? d.area : d.best, formacao: CAREERS[d.dept] || [] };
   });
   const cursos = result.compList.slice(-2).reverse().map(c => CURSO_COMP[c.key]).filter(Boolean);
   const intro = tipo === "funcionario"
     ? "Esta devolutiva mostra seus pontos fortes e onde você pode crescer na empresa."
     : "Esta devolutiva mostra seu jeito de trabalhar e as áreas em que seu perfil tende a render mais.";
-  return { tipo, intro, perfil, fortes, desenvolver, areas, cursos };
+  // versão 0.3: interesses, liderança e aviso de resultado sem preferência clara
+  let interesses = null;
+  if (result.interesses) {
+    const ord = RIASEC.filter(t => result.interesses[t] != null).sort((a, b) => result.interesses[b] - result.interesses[a]);
+    interesses = ord.slice(0, 2).map(t => RIASEC_TEXT[t]);
+  }
+  const L = result.lideranca;
+  const lideranca = L && L.medido ? {
+    nivel: L.nivel,
+    texto: L.nivel === "alto"
+      ? "Seu perfil mostra gosto e experiência em coordenar pessoas. Funções de liderança tendem a combinar com você."
+      : L.nivel === "medio"
+        ? "Você tem base para coordenar pessoas em alguns contextos. Liderar projetos curtos ajuda a descobrir se esse caminho combina com você."
+        : "Seu perfil tende a render mais com foco na própria entrega do que na coordenação de pessoas, ao menos por enquanto."
+  } : null;
+  const aviso = result.inconclusivo
+    ? "Seu resultado não mostrou uma preferência forte por uma área. As áreas abaixo ficaram só um pouco à frente das outras: use-as como ponto de partida para conversar, não como conclusão."
+    : null;
+  return { tipo, intro, perfil, fortes, desenvolver, areas, cursos, interesses, lideranca, aviso };
 }
 
 /* ================= Etapa 2: biblioteca editável, vagas, entrevista específica, reorganização ================= */
@@ -602,9 +815,9 @@ function validateDept(d, lib) {
 }
 
 /* Compatibilidade de uma pessoa com uma vaga */
-function scoreVaga(vaga, answers, generalNotes, cand) {
+function scoreVaga(vaga, answers, generalNotes, cand, extra) {
   const traits = scoreTraits(answers || []);
-  const comps = scoreCompetenciesFromMap(traits, interviewMap(generalNotes, vaga.perguntas, cand && cand.notas));
+  const comps = scoreCompetenciesFromMap(traits, interviewMap(generalNotes, vaga.perguntas, cand && cand.notas), scoreExtra(extra));
   const fit = scoreFunction({ name: vaga.titulo, comps: (vaga.perfil || []).map(c => ({ ...c, w: +c.w, name: compName(c) })) }, comps);
   const pre = (vaga.prereqs || []).map((t, i) => cand && Array.isArray(cand.prereq) && cand.prereq[i] != null ? cand.prereq[i] : null);
   const des = (vaga.desejaveis || []).map((t, i) => !!(cand && Array.isArray(cand.desej) && cand.desej[i]));
@@ -624,10 +837,10 @@ function scoreVaga(vaga, answers, generalNotes, cand) {
    emps: [{ key, nome, answers, notas, atual: {deptId, func} | null, cands: {vagaId: candidatura} }] */
 function reorganize(emps, vagas, lib) {
   const rows = emps.map(e => {
-    const analysis = analyze(e.answers, e.notas, lib);
+    const analysis = analyze(e.answers, e.notas, lib, e.extra);
     const ff = e.atual ? findFunc(lib, e.atual.deptId, e.atual.func) : null;
     const cur = ff ? scoreFunction(ff.func, analysis.comps).pct : null;
-    const vs = vagas.map(v => ({ vaga: v, s: scoreVaga(v, e.answers, e.notas, e.cands && e.cands[v.id]) }));
+    const vs = vagas.map(v => ({ vaga: v, s: scoreVaga(v, e.answers, e.notas, e.cands && e.cands[v.id], e.extra) }));
     return { e, analysis, atual: ff, atualInvalida: !!e.atual && !ff, cur, vs, move: null };
   });
   const pairs = [];
@@ -847,6 +1060,7 @@ function nineBox(desempenho, pot) {
 if (typeof module !== "undefined") {
   module.exports = { TRAITS, TRAIT_NAMES, ITEMS, ITEM_ORDER, COHERENCE_PAIRS, COMPS, ALIAS, LIBRARY, INTERVIEW, RULES, RULES2, QBANK,
     scoreTraits, scoreCompetencies, scoreCompetenciesFromMap, interviewMap, scoreFunction, scoreDepartments, answerAlerts, analyze, buildFeedback,
+    RIASEC, RIASEC_NAMES, RIASEC_TEXT, ESCALAS, EXTRA_ITEMS, EXTRA_N, EXTRA_INTRO, DEPT_RIASEC, scoreExtra, standardize, leadershipIndex,
     generateQuestions, buildLibrary, findFunc, buildGuide, GUIDE, DEV, CAREERS, CURSO_COMP, RULES3, potencialOf, extraAlerts, riskOfLeaving, nineBox, validateProfile, validateDept, scoreVaga, reorganize, slugify };
 }
 

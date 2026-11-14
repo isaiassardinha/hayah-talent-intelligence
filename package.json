@@ -1,6 +1,6 @@
 {
   "name": "hayah-talent-intelligence",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Análise de perfil, compatibilidade com funções e vagas e alocação de pessoas em equipes. Uso pessoal e testes.",
   "scripts": {
@@ -14,6 +14,7 @@
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.119.0",
     "next": "15.5.29",
+    "qrcode": "^1.5.4",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

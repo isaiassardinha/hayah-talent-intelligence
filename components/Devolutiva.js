@@ -10,7 +10,16 @@ export default function Devolutiva({ fb }) {
       <p>{(fb.fortes || []).join(", ")}.</p>
       <h3>Pontos para desenvolver</h3>
       <p>{(fb.desenvolver || []).join(", ")}.</p>
+      {fb.interesses && fb.interesses.length > 0 && (<>
+        <h3>O que mais te atrai</h3>
+        <p>Atividades de {fb.interesses.join(" e de ")}.</p>
+      </>)}
+      {fb.lideranca && (<>
+        <h3>Liderança</h3>
+        <p>{fb.lideranca.texto}</p>
+      </>)}
       <h3>Áreas em que seu perfil tende a render mais</h3>
+      {fb.aviso && <p className="small">{fb.aviso}</p>}
       <ol style={{ margin: "4px 0 0", paddingLeft: 20 }}>
         {(fb.areas || []).map((a, i) => <li key={i}>{a.dept} <span className="muted">(por exemplo, {a.funcao})</span></li>)}
       </ol>

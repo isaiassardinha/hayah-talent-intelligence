@@ -43,7 +43,7 @@ export async function avaliarComClaude(id) {
 
 export async function liberarDevolutiva(id) {
   const supabase = await supabaseServidor();
-  const { data: av } = await supabase.from("avaliacoes").select("respostas, notas, tipo, duracao_seg").eq("id", id).single();
+  const { data: av } = await supabase.from("avaliacoes").select("respostas, respostas_extra, notas, tipo, duracao_seg").eq("id", id).single();
   if (!av) voltar(id, "Avaliação não encontrada.", true);
   const fb = M.buildFeedback(analisar(av), av.tipo);
   const { error } = await supabase.from("avaliacoes")

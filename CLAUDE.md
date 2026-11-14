@@ -4,7 +4,7 @@ Contexto para o Claude Code trabalhar neste repositório.
 
 ## Projeto
 
-Hayah Talent Intelligence: sistema que analisa o perfil de uma pessoa (teste de personalidade HEXACO com 60 afirmações + entrevista estruturada) e calcula a compatibilidade com funções, departamentos e vagas. Também sugere reorganização de equipes, mostra risco de saída, sucessão e planos de desenvolvimento.
+Hayah Talent Intelligence: sistema que analisa o perfil de uma pessoa (teste de personalidade HEXACO com 60 afirmações + bloco 2 com 33 itens de interesses RIASEC, motivação para liderar e histórico + entrevista estruturada) e calcula a compatibilidade com funções, departamentos e vagas. Também sugere reorganização de equipes, mostra risco de saída, sucessão e planos de desenvolvimento.
 
 Quem conduz o projeto é o Isaías. Não há equipe de programação: o código é escrito com o Claude.
 
@@ -35,8 +35,10 @@ Quem conduz o projeto é o Isaías. Não há equipe de programação: o código 
 ## Regras do motor que não podem quebrar
 
 - Nota de competência = 60% traços + 40% entrevista (quando avaliada). Conhecimento técnico só vem da entrevista específica.
-- Compatibilidade da função = média ponderada das notas (nota 1 = 0%, nota 5 = 100%), menos 10 pontos por competência crítica abaixo de 3.
-- Departamento: maior nota entre as funções para recomendar (top 3); média das funções para as 3 áreas não indicadas.
+- Compatibilidade da função = média ponderada das notas (nota 1 = 0%, nota 5 = 100%), menos 10 pontos por competência crítica abaixo de 3. Vale para funções, vagas e reorganização.
+- Áreas (top 3 e 3 não indicadas, versão 0.3): nota da área = 50% perfil padronizado pela média da pessoa (média das funções) + 50% interesses RIASEC. Sem bloco 2, só o perfil. Diferença pequena = resultado inconclusivo.
+- Índice de liderança = 40% motivação + 30% histórico + 30% traços. Alto (≥ 3,8): a função sugerida em cada área é a de liderança.
+- Estabilidade emocional vem só das facetas Ansiedade e Medo (`Ea`).
 - Constantes ficam em `RULES`, `RULES2` e `RULES3`. Mudou um número? Atualize também a tabela de regras em `docs/especificacao.md`.
 - Dados demográficos (auditoria de viés) nunca entram no cálculo nem em relatório individual.
 

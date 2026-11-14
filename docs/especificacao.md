@@ -13,8 +13,8 @@ Metodologia: entrevista estruturada (ao vivo ou automática, escrita ou vídeo, 
 - Cada competência recebe nota de 1 a 5, para a pessoa e para o perfil ideal da função.
 - Compatibilidade da função = 100% menos a distância ponderada pelos pesos.
 - Competência crítica com nota abaixo de 3 gera penalidade extra.
-- Recomendação (3 melhores): nota do departamento = maior nota entre as funções.
-- Alerta (3 piores): nota do departamento = média das funções, com o motivo do desencaixe (estresse, desgaste, risco de erro).
+- Recomendação (3 melhores) e alerta (3 piores): desde a versão 0.3, pela nota da área (50% perfil padronizado + 50% interesses). Ver "Versão 0.3" no fim deste documento. Antes: maior nota entre as funções para recomendar e média das funções para alertar.
+- O motivo do desencaixe continua: competências críticas mais fracas (estresse, desgaste, risco de erro) e, quando houver, pouco interesse no tipo de atividade da área.
 
 ## 3. Biblioteca de departamentos
 
@@ -516,3 +516,34 @@ A versão para uso fora do Claude. Continua valendo a decisão de uso pessoal e 
 - **O que o administrador vê:** nome, e-mail, data de entrada e quantos convites e testes cada gestor tem. Não vê as pessoas avaliadas, as respostas nem os relatórios de outros gestores.
 - **Onde se aplica o teste:** o gestor cadastra empresas, entidades (associação, ONG, igreja, escola…) ou treinamentos (curso, turma, programa). O convite do tipo "participante" (antes "funcionário") fica ligado a um deles.
 
+
+## Versão 0.3: correções do teste do Henrique (14/11/2026)
+
+**Por quê.** No primeiro teste real, um perfil de liderança recebeu Logística, Produção e Manutenção, todas com a função de entrada como exemplo. Causas: notas espremidas (todas as competências entre 3,1 e 3,9, áreas entre 60% e 68%); a regra "maior nota entre as funções" deixava o cargo de entrada decidir a área; o teste media estilo (personalidade), mas não interesse nem vontade de liderar.
+
+**O que mudou**
+
+- **Botões da escala:** cerca de 35% mais baixos (número e texto mais compactos, menos espaço entre as afirmações).
+- **Bloco 2 do teste (33 itens, depois das 60 afirmações):** 24 atividades de interesse, 4 por tipo RIASEC (Realista, Investigativo, Artístico, Social, Empreendedor, Convencional), escala "Não gostaria nada" a "Gostaria muito"; 6 afirmações de motivação para liderar (1 invertida); 3 perguntas de histórico ("quantas vezes você coordenou um grupo", "foi escolhido para representar ou liderar", "ensinou ou orientou alguém"), escala de "Nunca" a "Mais de 6 vezes". Todos os itens foram escritos para este sistema: o modelo RIASEC é uma teoria pública e nenhuma escala publicada foi copiada. O teste passa a levar de 35 a 45 minutos.
+- **Perfil padronizado:** para escolher as áreas, cada competência é comparada com a média da própria pessoa (média = 3; cada desvio-padrão vale 0,8 ponto). Assim aparece o que se destaca na pessoa, mesmo quando ela responde tudo em tom moderado.
+- **Área separada de nível:** o perfil da área é a média das funções no perfil padronizado, sem penalidade. O cargo de entrada não decide mais a área. O nível vem do **índice de liderança**: 40% motivação para liderar + 30% histórico de liderança + 30% competência liderança pelos traços. Índice alto: a função de exemplo em cada área é a de liderança (maior peso em liderança). Senão, a de maior compatibilidade absoluta, sem contar a de liderança.
+- **Nota da área:** 50% perfil padronizado + 50% interesse. Cada departamento tem um código RIASEC de dois tipos (principal com peso 2, secundário com peso 1). Interesses também são padronizados pela média da pessoa (cada desvio-padrão vale 20 pontos, a partir de 50). Sem o bloco 2 (avaliações antigas e protótipo), a área usa só o perfil.
+- **Resultado inconclusivo:** se a média das 3 primeiras áreas ficar menos de 8 pontos acima da mediana de todas, o relatório e a devolutiva avisam que não há preferência clara.
+- **Competências mais robustas:** estabilidade emocional (e as competências que a usam) passa a vir só das facetas Ansiedade e Medo. Sentimentalismo e Dependência ficam de fora: sentir as emoções dos outros não é instabilidade. Liderança = 50% traços + 30% motivação + 20% histórico; desenvolvimento de pessoas = 70% traços + 30% histórico de ensino.
+- **Vagas e reorganização:** continuam com a compatibilidade absoluta da função (100% − distância até o ideal, com penalidade de crítica), porque ali importa o nível de cada competência.
+- **Convites:** o gestor define quantas pessoas podem responder (1 = individual) e por quanto tempo o link vale (1, 7, 30 ou 90 dias, ou sem prazo). Cada convite tem QR code para projetor ou impressão. Convite vencido aparece como encerrado e pode ganhar mais 7 dias. O sistema não envia e-mail em nenhum convite.
+- **Convite de gestor sem e-mail:** o administrador copia o link e manda. Com "Confirm email" desligado no Supabase, o gestor cria a senha e já entra.
+
+**Regras (constantes em `RULES`)**
+
+| Regra | Valor |
+| --- | --- |
+| `stdSpread` | 0,8 ponto por desvio-padrão da pessoa |
+| `stdMinSd` | desvio mínimo 0,3 (não estica ruído) |
+| `wAreaPerfil` / `wAreaInteresse` | 50% / 50% |
+| `interesseSpread` | 20 pontos por desvio-padrão |
+| `inconclusivo` | menos de 8 pontos entre a média das 3 primeiras e a mediana |
+| `wLidMotivacao` / `wLidHistorico` / `wLidTracos` | 40% / 30% / 30% |
+| `lidAlto` / `lidMedio` | 3,8 / 3,0 |
+
+**A validar:** pesos e faixas acima são primeira versão. Conferir com pessoas que o Henrique conhece bem, de perfis variados, antes de ajustar.

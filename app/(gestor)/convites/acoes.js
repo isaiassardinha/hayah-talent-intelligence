@@ -22,15 +22,26 @@ export async function criarConvite(formData) {
   const rotulo = String(formData.get("rotulo") || "").trim().slice(0, 160) || null;
   const menores = formData.get("menores") === "on";
   const autorizo = formData.get("autorizo") === "on";
+  // quantas pessoas podem responder (1 = convite individual) e por quantos dias o link vale
+  const limite = Math.min(5000, Math.max(1, Math.round(Number(formData.get("limite")) || 1)));
+  const dias = Number(formData.get("dias"));
+  const expira_em = [1, 7, 30, 90].includes(dias) ? new Date(Date.now() + dias * 24 * 3600 * 1000).toISOString() : null;
   if (tipo === "funcionario" && !empresa_id) voltar("Para convidar participantes, escolha a empresa, entidade ou treinamento.");
   if (menores && !autorizo) voltar("Para um grupo com menores, confirme que você tem a autorização dos pais ou responsáveis.");
   const supabase = await supabaseServidor();
   const { error } = await supabase.from("convites").insert({
-    empresa_id, tipo, rotulo, menores, autorizacao_em: menores ? new Date().toISOString() : null
+    empresa_id, tipo, rotulo, menores, limite, expira_em, autorizacao_em: menores ? new Date().toISOString() : null
   });
   if (error) voltar("Não foi possível criar o convite agora.");
   revalidatePath("/convites");
-  voltar(null, "Convite criado. Copie o link e envie para as pessoas.");
+  voltar(null, "Convite criado. Copie o link ou mostre o QR code. O sistema não envia e-mail: você distribui o link por WhatsApp, projetor ou impresso.");
+}
+
+// Convite vencido: reabre por mais 7 dias.
+export async function renovarConvite(id) {
+  const supabase = await supabaseServidor();
+  await supabase.from("convites").update({ ativo: true, expira_em: new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString() }).eq("id", id);
+  revalidatePath("/convites");
 }
 
 export async function alternarConvite(id, ativo) {

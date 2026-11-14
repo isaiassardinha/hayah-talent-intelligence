@@ -29,7 +29,7 @@ export default async function Gestores({ searchParams }) {
     <>
       <div className="stack" style={{ gap: 4 }}>
         <h2>Gestores</h2>
-        <p className="muted small">Só você, como administrador, vê esta página. Convide um gestor pelo e-mail: ele recebe um link, cria a senha e passa a cadastrar empresas, entidades ou treinamentos e a aplicar os testes. Cada gestor vê só os próprios dados.</p>
+        <p className="muted small">Só você, como administrador, vê esta página. Gere o convite e envie o link você mesmo (WhatsApp, por exemplo): o sistema não manda e-mail. O gestor abre o link, cria a senha e já entra. O e-mail serve só como login. Cada gestor vê só os próprios dados.</p>
       </div>
       {erro && <div className="alert bad" role="alert">{erro}</div>}
       {ok && <div className="alert good" role="status">{ok}</div>}
@@ -41,7 +41,7 @@ export default async function Gestores({ searchParams }) {
             <label className="field">Nome<input type="text" name="nome" maxLength={120} placeholder="Ex.: Carla Souza" autoComplete="off" /></label>
             <label className="field">E-mail<input type="email" name="email" required maxLength={254} placeholder="carla@empresa.com.br" autoComplete="off" /></label>
           </div>
-          <p className="small muted">O link vale por 7 dias e só funciona uma vez, com este e-mail.</p>
+          <p className="small muted">O link vale por 7 dias e só funciona uma vez, com este e-mail. Nenhum e-mail é enviado: copie o link na lista abaixo.</p>
           <div><button className="btn primary">Gerar convite</button></div>
         </form>
       </section>

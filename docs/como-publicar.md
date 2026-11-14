@@ -63,10 +63,12 @@ A primeira conta do banco vira a do administrador. Só ela pode convidar gestore
 ## 7. Convidar gestores
 
 1. Em **Gestores**, escreva o nome e o e-mail do gestor e toque em **Gerar convite**.
-2. Copie o link e envie para a pessoa (WhatsApp, e-mail…). Ele vale por 7 dias e só uma vez.
-3. A pessoa abre o link, cria a senha e confirma pelo e-mail. Depois ela cadastra as empresas, entidades ou treinamentos e cria os convites do teste.
+2. Copie o link e envie para a pessoa (WhatsApp, por exemplo). O sistema não manda e-mail. O link vale por 7 dias e só uma vez.
+3. A pessoa abre o link, cria a senha e já entra (sem e-mail de confirmação, se **Confirm email** estiver desligado). Depois ela cadastra as empresas, entidades ou treinamentos e cria os convites do teste.
 
 Deixe **Allow new users to sign up** **ligado** no Supabase (**Authentication** > **Sign In / Providers**). O próprio banco recusa qualquer cadastro sem convite válido. Se essa opção estiver desligada, nem os gestores convidados conseguem criar a conta.
+
+Desligue **Confirm email** no mesmo lugar (**Authentication** > **Sign In / Providers** > **Email**). O sistema não envia e-mail: o convite é o link que você manda. Com a confirmação desligada, o gestor cria a senha e já entra. Com ela ligada, o Supabase manda um e-mail de confirmação, e o serviço de e-mail padrão dele tem limite baixo de envios por hora.
 
 Quem faz o teste pelo link do convite não precisa de conta.
 

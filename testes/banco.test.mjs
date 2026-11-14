@@ -103,3 +103,16 @@ const ent2 = (await as("authenticated", C, "insert into empresas (nome, tipo) va
 ok(ent2.tipo === "treinamento", "cadastra treinamento como tipo de organização");
 await fails(() => as("authenticated", C, "insert into empresas (nome, tipo) values ('X Y', 'escola')"), "tipo de organização desconhecido é recusado");
 
+
+// ------------------------------------------------------------ 0004: bloco 2 e validade dos convites
+const cv4 = (await as("authenticated", C, "insert into convites (tipo, rotulo, limite, expira_em) values ('avulso', 'Palestra', 50, now() + interval '7 days') returning token")).rows[0];
+const ext = Array(33).fill(4);
+const seg4 = (await as("anon", null, "select enviar_respostas(p_token => $1, p_nome => 'Pessoa Nova', p_respostas => $2::smallint[], p_entrevista => $3::text[], p_consentimento => true, p_duracao_seg => 900, p_respostas_extra => $4::smallint[]) s", [cv4.token, resp, ent, ext])).rows[0].s;
+ok(seg4 && seg4.length === 32, "envia as 33 respostas do bloco 2");
+ok((await as("authenticated", C, "select array_length(respostas_extra, 1) n from avaliacoes")).rows[0].n === 33, "o gestor recebe o bloco 2");
+ok((await as("anon", null, "select enviar_respostas($1, 'Pessoa Antiga', $2::smallint[], $3::text[], true, 900) s", [cv4.token, resp, ent])).rows[0].s.length === 32, "página antiga, sem o bloco 2, continua enviando");
+await fails(() => as("anon", null, "select enviar_respostas(p_token => $1, p_nome => 'Pessoa X', p_respostas => $2::smallint[], p_entrevista => $3::text[], p_consentimento => true, p_duracao_seg => 10, p_respostas_extra => $4::smallint[])", [cv4.token, resp, ent, Array(32).fill(3)]), "bloco 2 com 32 respostas é recusado");
+await fails(() => as("anon", null, "select enviar_respostas(p_token => $1, p_nome => 'Pessoa X', p_respostas => $2::smallint[], p_entrevista => $3::text[], p_consentimento => true, p_duracao_seg => 10, p_respostas_extra => $4::smallint[])", [cv4.token, resp, ent, Array(33).fill(0)]), "bloco 2 com resposta 0 é recusado");
+await as("authenticated", C, "update convites set expira_em = now() - interval '1 minute'");
+ok((await as("anon", null, "select * from convite_publico($1)", [cv4.token])).rows[0].aberto === false, "convite vencido aparece encerrado");
+await fails(() => as("anon", null, "select enviar_respostas($1, 'Pessoa Y', $2::smallint[], $3::text[], true, 10)", [cv4.token, resp, ent]), "convite vencido não recebe respostas");

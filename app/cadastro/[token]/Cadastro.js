@@ -32,14 +32,15 @@ export default function Cadastro({ token, email, nome }) {
     setOcupado(false);
     if (error) return setMsg(ERROS[error.message] || "Não foi possível criar a conta agora. Tente de novo.");
     if (data.session) { router.push("/painel"); router.refresh(); return; }
+    // Sem sessão: o Supabase ainda está pedindo confirmação por e-mail (opção "Confirm email" ligada).
     setFeito(true);
   }
 
   if (feito) {
     return (
       <div className="card stack">
-        <h2>Falta confirmar o e-mail</h2>
-        <p>Enviamos um link para <strong>{email}</strong>. Abra o e-mail neste mesmo aparelho e toque no link para entrar. Se não encontrar, veja no spam.</p>
+        <h2>Conta criada</h2>
+        <p>O sistema ainda está configurado para confirmar o e-mail. Procure a mensagem enviada para <strong>{email}</strong> (veja também no spam) ou peça ao administrador para desligar a confirmação por e-mail no Supabase.</p>
       </div>
     );
   }

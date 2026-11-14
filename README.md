@@ -51,7 +51,7 @@ npm test          # testes do motor e do banco
 
 ## O que o protótipo faz
 
-- Teste de personalidade com 60 afirmações (modelo HEXACO) e entrevista estruturada com 10 perguntas, com notas do gestor ou do Claude.
+- Teste de personalidade com 60 afirmações (modelo HEXACO), bloco de 33 itens sobre interesses (RIASEC), motivação para liderar e histórico, e entrevista estruturada com 10 perguntas, com notas do gestor ou do Claude.
 - Compatibilidade com 75 funções de 25 departamentos: 3 áreas recomendadas e 3 não indicadas por pessoa.
 - Vagas com pré-requisitos, pontos desejáveis, entrevista específica, ranking e comparação de candidatos.
 - Equipes: mapa de competências, talentos (9 caixas), risco de saída, sucessão, reorganização e retorno estimado.
