@@ -2,17 +2,36 @@
 
 Sistema de análise de perfil, compatibilidade com funções e vagas e alocação de pessoas em equipes.
 
-> **Situação atual:** protótipo para uso pessoal e testes. Não é avaliação psicológica nem teste psicológico, e não deve ser usado para decidir contratações, demissões ou promoções. Ver a seção "Decisão: uso pessoal, só para testes" em `docs/especificacao.md`.
+> **Situação atual:** uso pessoal e testes. Não é avaliação psicológica nem teste psicológico, e não deve ser usado para decidir contratações, demissões ou promoções. Ver a seção "Decisão: uso pessoal, só para testes" em `docs/especificacao.md`.
 
 ## O que tem aqui
 
 | Pasta ou arquivo | O que é |
 | --- | --- |
-| `prototipo/index.html` | O protótipo completo, numa página só (HTML, CSS e JavaScript). |
-| `prototipo/motor.js` | O motor de cálculo, separado do `index.html` para testar e reaproveitar. Gerado a partir do `index.html`. |
-| `docs/especificacao.md` | A especificação completa: objetivos, perfis de acesso, metodologia, biblioteca, fases e todas as decisões tomadas. |
-| `testes/motor.test.js` | Testes automáticos do motor de cálculo. |
+| `app/`, `components/`, `lib/` | A versão web (Next.js): login do gestor, convites por link, teste no celular, painel, relatório e devolutiva. |
+| `supabase/migrations/0001_inicial.sql` | O banco de dados: tabelas, regras de segurança (cada gestor só vê os seus dados) e as funções usadas pelo teste público. |
+| `docs/como-publicar.md` | **Passo a passo para colocar no ar** com Supabase e Vercel. |
+| `prototipo/index.html` | O protótipo completo, numa página só. Tem todas as funções (vagas, equipes etc.). |
+| `prototipo/motor.js` | O motor de cálculo. Gerado a partir do `index.html` e usado pela versão web. |
+| `docs/especificacao.md` | A especificação completa e todas as decisões tomadas. |
+| `testes/` | Testes do motor e do banco de dados. |
 | `CLAUDE.md` | Contexto do projeto para o Claude Code. |
+
+## A versão web
+
+Para colocar no ar, siga [`docs/como-publicar.md`](docs/como-publicar.md).
+
+O que já funciona:
+
+- conta de gestor com e-mail e senha;
+- empresas e convites por link (avulso ou funcionário), com pausa e limite de respostas;
+- teste no celular, sem conta, com consentimento e progresso salvo no aparelho;
+- painel com as pessoas avaliadas e o que falta fazer;
+- relatório da pessoa: áreas recomendadas e não indicadas, traços, competências e guia de gestão;
+- notas da entrevista pelo gestor ou pelo Claude (opcional);
+- devolutiva por link próprio, que só aparece depois que o gestor libera.
+
+Ainda só no protótipo: vagas, equipes, reorganização, sucessão, reavaliação, validação, auditoria de viés e relatórios para baixar.
 
 ## Como abrir o protótipo
 
@@ -21,11 +40,12 @@ Sistema de análise de perfil, compatibilidade com funções e vagas e alocaçã
 
 ## Como rodar os testes
 
-Precisa do Node.js 18 ou mais novo.
+Precisa do Node.js 20 ou mais novo.
 
 ```bash
+npm install
 npm run extrair   # atualiza prototipo/motor.js a partir do index.html
-npm test          # roda os testes do motor
+npm test          # testes do motor e do banco
 ```
 
 ## O que o protótipo faz
@@ -39,23 +59,7 @@ npm test          # roda os testes do motor
 
 ## Limites do protótipo
 
-Os limites vêm de o protótipo ser uma página dentro do Claude:
-
-- só há um gestor;
-- não há login próprio nem convite por link para qualquer pessoa;
-- não há cobrança;
-- os dados ficam no armazenamento da página no Claude.
-
-## Próximo passo: a versão para outras pessoas usarem
-
-A ideia é transformar o protótipo num site próprio:
-
-- **Supabase:** banco de dados e login, com servidores em São Paulo.
-- **Vercel:** hospedagem do site.
-- **Convite por link:** qualquer pessoa faz o teste no próprio celular.
-- **Dados separados:** cada gestor vê só os seus dados.
-
-O motor de cálculo (`prototipo/motor.js`) e os textos são reaproveitados como estão.
+O protótipo é uma página dentro do Claude: um gestor só, sem login próprio e sem convite por link. Por isso existe a versão web.
 
 Documentos de apoio no Claude (fora deste repositório):
 

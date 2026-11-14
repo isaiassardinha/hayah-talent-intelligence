@@ -494,3 +494,17 @@ Por enquanto, o sistema fica para uso pessoal e para testes. Não há psicólogo
 - **Mudanças na página:** o rodapé e os relatórios baixados passam a dizer que o sistema é um protótipo para uso pessoal e testes. Também dizem que ele não é avaliação psicológica e não deve ser usado para decidir contratações, demissões ou promoções.
 - **Testes:** feitos com voluntários adultos que concordem em participar, sem impacto no trabalho deles.
 - **Para voltar a pensar em venda:** escolher entre usar um teste já aprovado no SATEPSI, posicionar o produto como ferramenta comportamental sem psicólogo ou submeter um teste próprio ao SATEPSI. Os documentos Kit de validação e piloto e Materiais do piloto ficam guardados para essa fase.
+
+## Versão web: primeira entrega (13/11/2026)
+
+A versão para uso fora do Claude. Continua valendo a decisão de uso pessoal e testes.
+
+- **Tecnologia:** Next.js 15 na Vercel; banco e login no Supabase (região São Paulo). Passo a passo em `docs/como-publicar.md`.
+- **Motor:** o mesmo do protótipo (`prototipo/motor.js`). Nenhuma regra de cálculo mudou.
+- **Gestor:** conta com e-mail e senha. Cada gestor só vê as próprias empresas, convites e avaliações (regras de segurança no banco, por linha).
+- **Convite por link:** tipo avulso ou funcionário, com rótulo, limite de respostas (padrão 200) e opção de pausar. Convite que aceita menores exige a confirmação de que o gestor tem a autorização dos responsáveis.
+- **Teste:** a pessoa não precisa de conta. Aceita o termo, responde as 60 afirmações e as 10 perguntas da entrevista. O progresso fica salvo no próprio aparelho até o envio. O banco confere as respostas (60 notas de 1 a 5) antes de gravar.
+- **Entrevista:** o gestor dá as notas de 1 a 5, ou usa o Claude se a chave da API estiver configurada. A nota final segue a regra de 60% traços + 40% entrevista.
+- **Devolutiva:** cada pessoa recebe um link próprio e secreto. O texto só aparece depois que o gestor libera, e fica guardado como estava no momento da liberação. Liberar de novo atualiza o texto.
+- **Fica para as próximas entregas:** vagas, equipes, reorganização, sucessão, reavaliação, validação com desempenho, auditoria de viés, marca e relatórios para baixar.
+

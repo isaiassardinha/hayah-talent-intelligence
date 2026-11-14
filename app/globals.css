@@ -1,0 +1,105 @@
+/* Paleta clara: fundo branco, azul como cor de ação, semáforo só para estado. */
+:root {
+  --ink: #15233b; --muted: #5b6880; --paper: #f7f9fc; --panel: #ffffff; --line: #e1e7f0; --line-strong: #c6d1e0;
+  --accent: #1f62d6; --accent-ink: #ffffff; --accent-soft: #e9f1fe;
+  --good: #2b7a4b; --good-soft: #e4f3ea; --warn: #a56a14; --warn-soft: #fbf1df; --bad: #b23b33; --bad-soft: #fbe7e5;
+  --radius: 10px; color-scheme: light;
+  --font: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Sora", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box }
+html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5 }
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; line-height: 1.25; text-wrap: balance }
+h1 { font-size: 1.15rem } h2 { font-size: 1.3rem; font-weight: 600 } h3 { font-size: 1rem; font-weight: 600 } h4 { font-size: .92rem; font-weight: 600 }
+p { margin: 0 }
+a { color: var(--accent) }
+button, input, select, textarea { font: inherit; color: inherit }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.num { font-variant-numeric: tabular-nums }
+.muted { color: var(--muted) } .small { font-size: .88rem } .err { color: var(--bad) }
+.stack { display: flex; flex-direction: column; gap: 12px }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center }
+.between { justify-content: space-between }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
+.grid2 > *, .grid3 > * { min-width: 0 }
+@media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr } }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); background: var(--panel); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; text-decoration: none; color: var(--ink) }
+.btn:hover { border-color: var(--ink) }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+.btn.danger { color: var(--bad); border-color: var(--bad) }
+.btn.small { padding: 4px 10px; font-size: .85rem }
+.btn:disabled { opacity: .55; cursor: not-allowed }
+label.field { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: .92rem }
+input[type=text], input[type=email], input[type=password], input[type=number], select, textarea { border: 1px solid var(--line-strong); background: var(--paper); border-radius: 8px; padding: 8px 10px; font-weight: 400; width: 100% }
+textarea { min-height: 110px; resize: vertical }
+.chip { display: inline-block; font-size: .78rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent) }
+.chip.good { background: var(--good-soft); color: var(--good) } .chip.warn { background: var(--warn-soft); color: var(--warn) }
+.chip.bad { background: var(--bad-soft); color: var(--bad) } .chip.plain { background: transparent; border: 1px solid var(--line-strong); color: var(--muted) }
+.alert { border-radius: 8px; padding: 10px 14px; background: var(--warn-soft); border-left: 4px solid var(--warn); font-size: .92rem }
+.alert.bad { background: var(--bad-soft); border-left-color: var(--bad) }
+.alert.good { background: var(--good-soft); border-left-color: var(--good) }
+.bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden }
+.bar > i { display: block; height: 100%; background: #8db1ee; border-radius: 4px }
+.bar.g > i { background: var(--accent) } .bar.w > i { background: var(--warn) } .bar.b > i { background: var(--bad) }
+table.tab { width: 100%; border-collapse: collapse; font-size: .92rem }
+table.tab th, table.tab td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top }
+table.tab th { color: var(--muted); font-weight: 600; font-size: .8rem }
+table.tab td.n, table.tab th.n { text-align: right; white-space: nowrap }
+.tablewrap { overflow-x: auto }
+
+/* estrutura do gestor: menu na lateral */
+.app { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh }
+.lateral { position: sticky; top: 0; height: 100vh; background: var(--panel); border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; gap: 20px }
+.lateral .marca { padding: 0 8px 12px; border-bottom: 1px solid var(--line) }
+.lateral .marca small { color: var(--muted); font-size: .8rem }
+.lateral nav { display: flex; flex-direction: column; gap: 2px }
+.lateral nav a { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; color: var(--muted); font-weight: 600; text-decoration: none }
+.lateral nav a:hover { color: var(--ink) }
+.lateral nav a[aria-current=page] { background: var(--accent-soft); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent) }
+.lateral .pe { margin-top: auto; display: flex; flex-direction: column; gap: 8px; font-size: .85rem }
+main.conteudo { padding: 24px; display: flex; flex-direction: column; gap: 16px; max-width: 1240px; width: 100% }
+@media (max-width: 899px) {
+  .app { grid-template-columns: 1fr }
+  .lateral { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px 16px; gap: 10px }
+  .lateral .marca { border: 0; padding: 0 }
+  .lateral nav { flex-direction: row; overflow-x: auto; width: 100% }
+  .lateral .pe { margin: 0; flex-direction: row; width: 100%; justify-content: space-between }
+  main.conteudo { padding: 16px }
+}
+footer.aviso { padding: 8px 24px 32px; color: var(--muted); font-size: .82rem; max-width: 1240px }
+
+/* relatório */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px }
+.kpi b { display: block; font-family: var(--font-display); font-size: 1.5rem }
+.area { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 8px }
+.area.good { border-top: 4px solid var(--accent) } .area.bad { border-top: 4px solid var(--bad) }
+.area .pct { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700 }
+.frow { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: .9rem }
+.frow .bar { grid-column: 1 / -1 }
+.escala { position: relative; height: 10px; background: var(--line); border-radius: 5px }
+.escala b { position: absolute; top: -3px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; transform: translateX(-50%) }
+.pessoa { display: block; text-decoration: none; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px }
+.pessoa:hover { border-color: var(--accent) }
+.qa { display: grid; grid-template-columns: 1fr 110px; gap: 10px; align-items: start; border-top: 1px solid var(--line); padding-top: 12px }
+@media (max-width: 640px) { .qa { grid-template-columns: 1fr } }
+.guia { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 20px }
+.guia ul, .devolutiva ul { margin: 4px 0 0; padding-left: 18px }
+
+/* teste e devolutiva (páginas públicas) */
+.publica { max-width: 760px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 16px }
+.progresso { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden }
+.progresso i { display: block; height: 100%; background: var(--accent) }
+fieldset.item { border: 0; margin: 0; padding: 12px 0; border-top: 1px solid var(--line) }
+fieldset.item legend { font-weight: 600; padding: 0; margin-bottom: 8px }
+.likert { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px }
+.likert input { position: absolute; opacity: 0; pointer-events: none }
+.likert label { border: 1px solid var(--line-strong); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; font-size: .8rem; display: flex; flex-direction: column; gap: 2px; background: var(--panel) }
+.likert label b { font-size: 1rem }
+.likert input:checked + label { background: var(--accent); border-color: var(--accent); color: #fff }
+.likert input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px }
+@media (max-width: 520px) { .likert label { font-size: .68rem } }
+.devolutiva h3 { margin-top: 14px }
