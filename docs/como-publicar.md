@@ -16,7 +16,9 @@ Leva uns 20 minutos. Você só precisa do navegador.
 1. No menu da esquerda, abra **SQL Editor** e clique em **New query**.
 2. Abra o arquivo [`supabase/migrations/0001_inicial.sql`](../supabase/migrations/0001_inicial.sql) aqui no GitHub e clique no botão de copiar.
 3. Cole no editor e clique em **Run**.
-4. Deve aparecer "Success. No rows returned". Rode só uma vez.
+4. Deve aparecer "Success. No rows returned".
+5. Repita com o arquivo [`supabase/migrations/0002_ajustes_seguranca.sql`](../supabase/migrations/0002_ajustes_seguranca.sql).
+6. Cada arquivo roda só uma vez, na ordem dos números.
 
 ## 3. Supabase: copiar as chaves
 

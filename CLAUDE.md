@@ -26,6 +26,7 @@ Quem conduz o projeto é o Isaías. Não há equipe de programação: o código 
 - `supabase/migrations/`: SQL do banco. Toda tabela tem RLS por `gestor_id = auth.uid()`. O teste e a devolutiva públicos só passam pelas funções `convite_publico`, `enviar_respostas` e `devolutiva_publica` (SECURITY DEFINER). Mudou o banco? Crie uma nova migração numerada; não edite a `0001` já aplicada.
 - `lib/motor.js` importa `prototipo/motor.js`: o motor é o mesmo do protótipo.
 - `docs/como-publicar.md`: passo a passo do Supabase e da Vercel.
+- Produção: Supabase "Hayah Talent Intelligence" (ref `eouvuhnyzrwxnilkrxwt`, São Paulo) e Vercel "hayah-talent" (time isaias19, região gru1). Todo push na `main` publica.
 - `prototipo/index.html`: o protótipo inteiro. O primeiro `<script>` é o motor de cálculo (sem acesso a tela nem a dados); o segundo é a interface.
 - `prototipo/motor.js`: cópia do primeiro `<script>`, gerada por `npm run extrair`. **Não editar à mão**: edite o `index.html` e rode o script.
 - `docs/especificacao.md`: especificação e decisões. Toda regra nova ou mudada entra lá, na seção da fase correspondente.
