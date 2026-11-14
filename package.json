@@ -1,0 +1,13 @@
+{
+  "name": "hayah-talent-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Análise de perfil, compatibilidade com funções e vagas e alocação de pessoas em equipes. Protótipo para uso pessoal e testes.",
+  "scripts": {
+    "extrair": "node scripts/extrair-motor.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
