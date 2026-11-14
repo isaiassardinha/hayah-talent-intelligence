@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-const PRIVADAS = ["/painel", "/pessoas", "/convites"];
+const PRIVADAS = ["/painel", "/pessoas", "/convites", "/gestores"];
 
 // Renova a sessão do Supabase a cada visita e protege as páginas do gestor.
 export async function middleware(request) {

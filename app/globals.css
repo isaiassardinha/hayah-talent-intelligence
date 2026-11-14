@@ -48,7 +48,7 @@ table.tab { width: 100%; border-collapse: collapse; font-size: .92rem }
 table.tab th, table.tab td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top }
 table.tab th { color: var(--muted); font-weight: 600; font-size: .8rem }
 table.tab td.n, table.tab th.n { text-align: right; white-space: nowrap }
-.tablewrap { overflow-x: auto }
+.tablewrap { overflow-x: auto; max-width: 100%; min-width: 0 }
 
 /* estrutura do gestor: menu na lateral */
 .app { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh }
@@ -62,11 +62,13 @@ table.tab td.n, table.tab th.n { text-align: right; white-space: nowrap }
 .lateral .pe { margin-top: auto; display: flex; flex-direction: column; gap: 8px; font-size: .85rem }
 main.conteudo { padding: 24px; display: flex; flex-direction: column; gap: 16px; max-width: 1240px; width: 100% }
 @media (max-width: 899px) {
-  .app { grid-template-columns: 1fr }
+  .app { grid-template-columns: minmax(0, 1fr) }
+  .app > * { min-width: 0 }
   .lateral { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px 16px; gap: 10px }
   .lateral .marca { border: 0; padding: 0 }
-  .lateral nav { flex-direction: row; overflow-x: auto; width: 100% }
-  .lateral .pe { margin: 0; flex-direction: row; width: 100%; justify-content: space-between }
+  .lateral nav { flex-direction: row; overflow-x: auto; width: 100%; min-width: 0 }
+  .lateral nav a { white-space: nowrap; flex: none }
+  .lateral .pe { margin: 0; flex-direction: row; width: 100%; min-width: 0; justify-content: space-between; align-items: center }
   main.conteudo { padding: 16px }
 }
 footer.aviso { padding: 8px 24px 32px; color: var(--muted); font-size: .82rem; max-width: 1240px }

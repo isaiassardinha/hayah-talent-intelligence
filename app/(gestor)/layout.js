@@ -4,8 +4,10 @@ import { usuarioAtual } from "@/lib/supabase/server";
 import { AVISO_LEGAL } from "@/lib/formato";
 
 export default async function LayoutGestor({ children }) {
-  const { user } = await usuarioAtual();
+  const { supabase, user } = await usuarioAtual();
   if (!user) redirect("/entrar");
+  const { data: gestor } = await supabase.from("gestores").select("nome, papel").eq("id", user.id).maybeSingle();
+  const admin = gestor?.papel === "admin";
   return (
     <div className="app">
       <aside className="lateral">
@@ -13,9 +15,12 @@ export default async function LayoutGestor({ children }) {
           <h1>Hayah Talent Intelligence</h1>
           <small>Perfil, compatibilidade e alocação de talentos</small>
         </div>
-        <NavLateral />
+        <NavLateral admin={admin} />
         <div className="pe">
-          <span className="muted" style={{ overflowWrap: "anywhere" }}>{user.email}</span>
+          <span className="muted" style={{ overflowWrap: "anywhere" }}>
+            {gestor?.nome ? <><strong style={{ color: "var(--ink)" }}>{gestor.nome}</strong><br /></> : null}
+            {user.email}{admin && <><br /><span className="chip">Administrador</span></>}
+          </span>
           <form action="/auth/sair" method="post"><button className="btn small">Sair</button></form>
         </div>
       </aside>

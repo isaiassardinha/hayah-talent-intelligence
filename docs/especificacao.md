@@ -508,3 +508,11 @@ A versão para uso fora do Claude. Continua valendo a decisão de uso pessoal e 
 - **Devolutiva:** cada pessoa recebe um link próprio e secreto. O texto só aparece depois que o gestor libera, e fica guardado como estava no momento da liberação. Liberar de novo atualiza o texto.
 - **Fica para as próximas entregas:** vagas, equipes, reorganização, sucessão, reavaliação, validação com desempenho, auditoria de viés, marca e relatórios para baixar.
 
+## Versão web: administrador e convite de gestor (13/11/2026)
+
+- **Administrador:** a primeira conta do banco é a do administrador (hoje, o Isaías). Só ele vê a página **Gestores**.
+- **Convite de gestor:** o administrador informa nome e e-mail e recebe um link. O link vale por 7 dias, serve uma vez só e só com aquele e-mail. Dá para cancelar e reativar.
+- **Cadastro fechado:** ninguém cria conta sem convite válido. A regra fica no banco (gatilho de cadastro), não só na tela. A página Entrar não oferece mais "criar conta".
+- **O que o administrador vê:** nome, e-mail, data de entrada e quantos convites e testes cada gestor tem. Não vê as pessoas avaliadas, as respostas nem os relatórios de outros gestores.
+- **Onde se aplica o teste:** o gestor cadastra empresas, entidades (associação, ONG, igreja, escola…) ou treinamentos (curso, turma, programa). O convite do tipo "participante" (antes "funcionário") fica ligado a um deles.
+

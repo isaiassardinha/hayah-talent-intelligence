@@ -17,8 +17,8 @@ Leva uns 20 minutos. Você só precisa do navegador.
 2. Abra o arquivo [`supabase/migrations/0001_inicial.sql`](../supabase/migrations/0001_inicial.sql) aqui no GitHub e clique no botão de copiar.
 3. Cole no editor e clique em **Run**.
 4. Deve aparecer "Success. No rows returned".
-5. Repita com o arquivo [`supabase/migrations/0002_ajustes_seguranca.sql`](../supabase/migrations/0002_ajustes_seguranca.sql).
-6. Cada arquivo roda só uma vez, na ordem dos números.
+5. Repita com os outros arquivos da pasta [`supabase/migrations`](../supabase/migrations), na ordem dos números (`0002`, `0003`…).
+6. Cada arquivo roda só uma vez.
 
 ## 3. Supabase: copiar as chaves
 
@@ -52,22 +52,23 @@ Leva uns 20 minutos. Você só precisa do navegador.
    - `http://localhost:3000/auth/confirmar` (para rodar no computador)
 4. Salve.
 
-## 6. Primeiro acesso
+## 6. Primeiro acesso (conta do administrador)
 
-1. Abra o site, clique em **Ainda não tenho conta** e crie sua conta.
-2. Confirme pelo e-mail que o Supabase enviar. O link volta para o site já logado.
-3. Em **Convites**, crie uma empresa e um convite.
-4. Use **Abrir o teste aqui** para fazer o teste você mesmo, ou mande o link para um voluntário.
-5. A pessoa aparece no **Painel**. Abra, dê as notas da entrevista e libere a devolutiva.
+A primeira conta do banco vira a do administrador. Só ela pode convidar gestores.
 
-## 7. Fechar o cadastro (recomendado)
+1. No Supabase, abra **Authentication** > **Users** > **Add user** > **Create new user**.
+2. Coloque seu e-mail e uma senha, marque **Auto Confirm User** e crie.
+3. Abra o site e entre com esse e-mail e senha. No menu aparece **Gestores**: é a área do administrador.
 
-Como o uso é pessoal, depois de criar sua conta:
+## 7. Convidar gestores
 
-1. No Supabase, abra **Authentication** > **Sign In / Providers** (ou **Providers** > **Email**).
-2. Desligue **Allow new users to sign up**.
+1. Em **Gestores**, escreva o nome e o e-mail do gestor e toque em **Gerar convite**.
+2. Copie o link e envie para a pessoa (WhatsApp, e-mail…). Ele vale por 7 dias e só uma vez.
+3. A pessoa abre o link, cria a senha e confirma pelo e-mail. Depois ela cadastra as empresas, entidades ou treinamentos e cria os convites do teste.
 
-Quem faz o teste pelo convite não precisa de conta. Isso continua funcionando.
+Deixe **Allow new users to sign up** **ligado** no Supabase (**Authentication** > **Sign In / Providers**). O próprio banco recusa qualquer cadastro sem convite válido. Se essa opção estiver desligada, nem os gestores convidados conseguem criar a conta.
+
+Quem faz o teste pelo link do convite não precisa de conta.
 
 ## Opcional
 
@@ -81,6 +82,7 @@ Quem faz o teste pelo convite não precisa de conta. Isso continua funcionando.
 | --- | --- |
 | O e-mail de confirmação não chega | Veja o spam. O envio padrão do Supabase tem limite baixo por hora: espere e tente de novo. |
 | O link do e-mail abre `localhost` | Falta o passo 5 (Site URL). |
+| Gestor convidado vê "Não foi possível criar a conta" | Confira se **Allow new users to sign up** está ligado no Supabase e se o convite ainda vale. |
 | "Convite não encontrado" ou "não está mais ativo" | O link está incompleto ou o convite foi pausado. Confira em **Convites**. |
 | Página em branco ou erro 500 | Confira as duas variáveis na Vercel e faça **Redeploy**. |
 | Erro ao rodar o SQL dizendo que algo já existe | O SQL já foi rodado. Não precisa rodar de novo. |

@@ -23,7 +23,7 @@ Quem conduz o projeto é o Isaías. Não há equipe de programação: o código 
 ## Estrutura
 
 - `app/`, `components/`, `lib/`: versão web em Next.js 15 (App Router, JavaScript). Login e dados no Supabase via `@supabase/ssr`. Rotas do gestor em `app/(gestor)/`; teste público em `app/t/[token]`; devolutiva pública em `app/d/[segredo]`.
-- `supabase/migrations/`: SQL do banco. Toda tabela tem RLS por `gestor_id = auth.uid()`. O teste e a devolutiva públicos só passam pelas funções `convite_publico`, `enviar_respostas` e `devolutiva_publica` (SECURITY DEFINER). Mudou o banco? Crie uma nova migração numerada; não edite a `0001` já aplicada.
+- `supabase/migrations/`: SQL do banco. Toda tabela tem RLS por `gestor_id = auth.uid()`. O teste e a devolutiva públicos só passam pelas funções `convite_publico`, `enviar_respostas` e `devolutiva_publica` (SECURITY DEFINER). Cadastro de gestor só com convite (`convites_gestor`), conferido no gatilho `criar_gestor`; `gestores.papel` = `admin` ou `gestor`, e só o admin vê `/gestores`. O admin vê contagens dos outros gestores, nunca as pessoas avaliadas. Mudou o banco? Crie uma nova migração numerada; não edite a `0001` já aplicada.
 - `lib/motor.js` importa `prototipo/motor.js`: o motor é o mesmo do protótipo.
 - `docs/como-publicar.md`: passo a passo do Supabase e da Vercel.
 - Produção: Supabase "Hayah Talent Intelligence" (ref `eouvuhnyzrwxnilkrxwt`, São Paulo) e Vercel "hayah-talent" (time isaias19, região gru1). Todo push na `main` publica.
@@ -48,4 +48,4 @@ Quem conduz o projeto é o Isaías. Não há equipe de programação: o código 
 
 ## Situação da versão web
 
-Primeira versão pronta: login, convites por link, dados isolados por gestor, teste, painel, relatório, entrevista e devolutiva. Ainda só no protótipo: vagas, equipes, reorganização, sucessão, reavaliação, validação, auditoria de viés e relatórios para baixar. Levar essas partes para a versão web, uma por vez, é a próxima etapa.
+Primeira versão pronta: administrador que convida gestores, login, empresas/entidades/treinamentos, convites por link, dados isolados por gestor, teste, painel, relatório, entrevista e devolutiva. Ainda só no protótipo: vagas, equipes, reorganização, sucessão, reavaliação, validação, auditoria de viés e relatórios para baixar. Levar essas partes para a versão web, uma por vez, é a próxima etapa.

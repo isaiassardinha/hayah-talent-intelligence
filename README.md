@@ -23,8 +23,9 @@ Para colocar no ar, siga [`docs/como-publicar.md`](docs/como-publicar.md).
 
 O que já funciona:
 
+- administrador do sistema, que convida os gestores por link (ninguém se cadastra sem convite);
 - conta de gestor com e-mail e senha;
-- empresas e convites por link (avulso ou funcionário), com pausa e limite de respostas;
+- empresas, entidades e treinamentos, e convites por link (avulso ou participante), com pausa e limite de respostas;
 - teste no celular, sem conta, com consentimento e progresso salvo no aparelho;
 - painel com as pessoas avaliadas e o que falta fazer;
 - relatório da pessoa: áreas recomendadas e não indicadas, traços, competências e guia de gestão;

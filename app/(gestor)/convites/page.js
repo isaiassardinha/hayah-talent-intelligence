@@ -1,25 +1,18 @@
-import { headers } from "next/headers";
 import { supabaseServidor } from "@/lib/supabase/server";
 import { criarEmpresa, criarConvite, alternarConvite } from "./acoes";
 import CopiarBotao from "@/components/CopiarBotao";
-import { fData, TIPO } from "@/lib/formato";
+import { fData, TIPO, ORG } from "@/lib/formato";
+import { origem } from "@/lib/origem";
 
 export const dynamic = "force-dynamic";
 
-async function origem() {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-  const h = await headers();
-  const host = h.get("x-forwarded-host") || h.get("host");
-  const proto = h.get("x-forwarded-proto") || (host && host.startsWith("localhost") ? "http" : "https");
-  return proto + "://" + host;
-}
 
 export default async function Convites({ searchParams }) {
   const { erro, ok } = await searchParams;
   const supabase = await supabaseServidor();
   const [{ data: empresas }, { data: convites }, { data: contagem }] = await Promise.all([
-    supabase.from("empresas").select("id, nome").order("nome"),
-    supabase.from("convites").select("id, token, tipo, rotulo, menores, autorizacao_em, ativo, limite, criado_em, empresas(nome)").order("criado_em", { ascending: false }),
+    supabase.from("empresas").select("id, nome, tipo").order("nome"),
+    supabase.from("convites").select("id, token, tipo, rotulo, menores, autorizacao_em, ativo, limite, criado_em, empresas(nome, tipo)").order("criado_em", { ascending: false }),
     supabase.from("avaliacoes").select("convite_id")
   ]);
   const respostas = {};
@@ -37,30 +30,38 @@ export default async function Convites({ searchParams }) {
 
       <div className="grid2" style={{ gridTemplateColumns: "1fr 2fr" }}>
         <section className="card stack">
-          <h3>Empresas</h3>
+          <h3>Onde você aplica</h3>
+          <p className="small muted">Empresas, entidades ou treinamentos em que você vai aplicar os testes.</p>
           <form action={criarEmpresa} className="stack">
-            <label className="field">Nome da empresa<input type="text" name="nome" required maxLength={120} placeholder="Ex.: Transportadora Rio Sul" /></label>
-            <div><button className="btn primary">Cadastrar empresa</button></div>
+            <label className="field">Tipo
+              <select name="tipo" defaultValue="empresa">
+                <option value="empresa">Empresa</option>
+                <option value="entidade">Entidade (associação, ONG, igreja, escola…)</option>
+                <option value="treinamento">Treinamento (curso, turma, programa)</option>
+              </select>
+            </label>
+            <label className="field">Nome<input type="text" name="nome" required maxLength={120} placeholder="Ex.: Transportadora Rio Sul" /></label>
+            <div><button className="btn primary">Cadastrar</button></div>
           </form>
           {empresas && empresas.length
-            ? <ul style={{ margin: 0, paddingLeft: 18 }}>{empresas.map(e => <li key={e.id}>{e.nome}</li>)}</ul>
-            : <p className="small muted">Nenhuma empresa cadastrada.</p>}
+            ? <ul className="stack" style={{ margin: 0, padding: 0, listStyle: "none", gap: 6 }}>{empresas.map(e => <li key={e.id} className="row" style={{ gap: 6 }}><span className="chip plain">{ORG[e.tipo]}</span> {e.nome}</li>)}</ul>
+            : <p className="small muted">Nada cadastrado ainda.</p>}
         </section>
 
         <section className="card stack">
           <h3>Novo convite</h3>
           <form action={criarConvite} className="stack">
             <div className="grid2">
-              <label className="field">Empresa
+              <label className="field">Empresa, entidade ou treinamento
                 <select name="empresa_id" defaultValue="">
-                  <option value="">Sem empresa</option>
-                  {(empresas || []).map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
+                  <option value="">Nenhum (pessoa avulsa)</option>
+                  {(empresas || []).map(e => <option key={e.id} value={e.id}>{e.nome} ({ORG[e.tipo].toLowerCase()})</option>)}
                 </select>
               </label>
               <label className="field">Tipo
                 <select name="tipo" defaultValue="avulso">
                   <option value="avulso">Pessoa avulsa (orientação de carreira)</option>
-                  <option value="funcionario">Funcionário da empresa</option>
+                  <option value="funcionario">Participante (funcionário, membro ou aluno)</option>
                 </select>
               </label>
             </div>
@@ -78,14 +79,14 @@ export default async function Convites({ searchParams }) {
         {convites && convites.length ? (
           <div className="tablewrap">
             <table className="tab">
-              <thead><tr><th>Identificação</th><th>Empresa</th><th>Tipo</th><th className="n">Respostas</th><th>Situação</th><th>Link</th></tr></thead>
+              <thead><tr><th>Identificação</th><th>Onde</th><th>Tipo</th><th className="n">Respostas</th><th>Situação</th><th>Link</th></tr></thead>
               <tbody>
                 {convites.map(c => {
                   const link = base + "/t/" + c.token;
                   return (
                     <tr key={c.id}>
                       <td>{c.rotulo || "–"}{c.menores && <> <span className="chip warn">Menores · autorização em {fData(c.autorizacao_em)}</span></>}<br /><span className="small muted">criado em {fData(c.criado_em)}</span></td>
-                      <td>{c.empresas ? c.empresas.nome : "–"}</td>
+                      <td>{c.empresas ? <>{c.empresas.nome}<br /><span className="small muted">{ORG[c.empresas.tipo]}</span></> : "–"}</td>
                       <td>{TIPO[c.tipo]}</td>
                       <td className="n num">{respostas[c.id] || 0}</td>
                       <td>

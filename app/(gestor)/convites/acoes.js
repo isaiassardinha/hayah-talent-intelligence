@@ -7,12 +7,13 @@ const voltar = (erro, ok) => redirect("/convites" + (erro ? "?erro=" + encodeURI
 
 export async function criarEmpresa(formData) {
   const nome = String(formData.get("nome") || "").trim();
-  if (nome.length < 2) voltar("Escreva o nome da empresa.");
+  const tipo = ["empresa", "entidade", "treinamento"].includes(formData.get("tipo")) ? formData.get("tipo") : "empresa";
+  if (nome.length < 2) voltar("Escreva o nome.");
   const supabase = await supabaseServidor();
-  const { error } = await supabase.from("empresas").insert({ nome: nome.slice(0, 120) });
-  if (error) voltar("Não foi possível cadastrar a empresa agora.");
+  const { error } = await supabase.from("empresas").insert({ nome: nome.slice(0, 120), tipo });
+  if (error) voltar("Não foi possível cadastrar agora.");
   revalidatePath("/convites");
-  voltar(null, "Empresa " + nome + " cadastrada.");
+  voltar(null, nome + " cadastrado.");
 }
 
 export async function criarConvite(formData) {
@@ -21,7 +22,7 @@ export async function criarConvite(formData) {
   const rotulo = String(formData.get("rotulo") || "").trim().slice(0, 160) || null;
   const menores = formData.get("menores") === "on";
   const autorizo = formData.get("autorizo") === "on";
-  if (tipo === "funcionario" && !empresa_id) voltar("Para convidar funcionários, escolha a empresa.");
+  if (tipo === "funcionario" && !empresa_id) voltar("Para convidar participantes, escolha a empresa, entidade ou treinamento.");
   if (menores && !autorizo) voltar("Para um grupo com menores, confirme que você tem a autorização dos pais ou responsáveis.");
   const supabase = await supabaseServidor();
   const { error } = await supabase.from("convites").insert({
